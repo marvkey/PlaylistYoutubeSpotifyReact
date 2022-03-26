@@ -1,6 +1,7 @@
 import "./Home.css"
 import React, { useState,Component,useEffect } from 'react';
 import axios from 'axios';
+import Playlist from './playlist.js';
 const PLAYLISTS_ENDPOINT = "https://api.spotify.com/v1/me/playlists";
 const getReturnedParamsFromSpotifyAuth = (hash) => {
   const stringAfterHashtag = hash.substring(1);
@@ -14,14 +15,10 @@ const getReturnedParamsFromSpotifyAuth = (hash) => {
 
   return paramsSplitUp;
 }; 
-var spotifyImages =[]
-
+let spotifyPlaylist=[];
 export default function View(){
-
-      
     const [spotifyData,setSpotifyData] = useState({})
     const [spotifyAccesToken,setSpotifyAccessToken] = useState('');
-    const [spotifyImageser,setSpotifyImages] = useState([]);
     useEffect(() => {
         if (window.location.hash) {
           const { access_token, expires_in, token_type } =
@@ -43,9 +40,6 @@ export default function View(){
           })
           .then((response) => {
             setSpotifyData(response.data);
-            //if(spotifyData.items != null ){
-            //    spotifyData.items.map((item) => spotifyImages.push(item.images.url))
-           // }
           })
           .catch((error) => {
             console.log(error);
@@ -53,9 +47,9 @@ export default function View(){
       };
 
       const handleGetImages=() =>{
-        handleGetPlaylists();
-        //if(spotifyImages.items  == null)return;
-        //0oRUQemdMM2IPVwmiDHDdJ
+      handleGetPlaylists();
+        if(spotifyData.item === null)return;
+        spotifyPlaylist =[]
         spotifyData.items.map((item) =>
         axios.get("https://api.spotify.com/v1/playlists/"+item.id+"/images",{
           headers: {
@@ -63,31 +57,32 @@ export default function View(){
           },
         })
         .then((response) => {
-          const value = response.data.map((item)=>  item.url)
-          spotifyImages.push(value)
-          setSpotifyImages([...spotifyImageser,{
-            value
-          }])
+          let data;
+            for(const element of response.data.reverse()){
+            data =""
+            data = element.url;
+            console.log(element.url)
+          };
+          console.log("ID: ",item.id);
+          console.log(item.name+" "+data);
+          spotifyPlaylist.push({name:item.name,data: data});
         })
         .catch((error) => {
           console.log(error);
         })
         )
       }
-      spotifyImages.map((item)=>console.log("yeah"+item))
-    //useEffect(() => {
-    //    handleGetPlaylists(); 
-    //});
-    //if(spotifyData.items != null ){
-    // spotifyData.items.map((item) => spotifyImages.push(item.images.url))
-    //} 
-  //  {spotifyData?.items ? spotifyData.items.map((item) => item.images.map(imag =><img src={imag.url} width={250} height={250} />)) : null}
-
+   
     return (
       <>
-        <button onClick={handleGetImages}>PlaylistGet</button>
-        { spotifyImages.map((item) => <p>{item}</p>)}
-      <p>{spotifyImages[0]}</p>
+      <button onClick={handleGetImages}>Spotify playlist</button>
+      {spotifyPlaylist.map(item =>(
+        <div>
+          <p>{item.name}</p>
+          <img src={item.data} width={200} height={200}/>
+        </div>
+        )
+      )}
       </>
     )
 } 
