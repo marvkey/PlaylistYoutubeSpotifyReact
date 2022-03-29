@@ -3,6 +3,17 @@ import React, { useState,Component,useEffect } from 'react';
 import axios from 'axios';
 import Playlist from './playlist.js';
 const PLAYLISTS_ENDPOINT = "https://api.spotify.com/v1/me/playlists";
+const YOUTUBE_PLAYLIST_ITEMS_API = 'https://www.googleapis.com/youtube/v3/playlistItems';
+
+export async function getYoutubeServerSideProps(){
+  const res = await fetch('${YOUTUBE_PLAYLIST_ITEMS_API}?part=snippet&key=${process.env.REACT_APP_YOUTUBE_API_KEY}')
+  const data = await res.json();
+  return {
+    props:{
+      data
+    }
+  }
+}
 const getReturnedParamsFromSpotifyAuth = (hash) => {
   const stringAfterHashtag = hash.substring(1);
   const paramsInUrl = stringAfterHashtag.split("&");
@@ -16,6 +27,7 @@ const getReturnedParamsFromSpotifyAuth = (hash) => {
   return paramsSplitUp;
 }; 
 let spotifyPlaylist=[];
+let youtubePlaylist =[];
 export default function View(){
     const [spotifyData,setSpotifyData] = useState({})
     const [spotifyAccesToken,setSpotifyAccessToken] = useState('');
@@ -45,9 +57,11 @@ export default function View(){
             console.log(error);
           });
       };
-
+      let data =getYoutubeServerSideProps();
+      console.log(data);
       const handleGetImages=() =>{
-      handleGetPlaylists();
+        handleGetPlaylists();
+       
         if(spotifyData.item === null)return;
         spotifyPlaylist =[]
         spotifyData.items.map((item) =>
