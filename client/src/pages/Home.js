@@ -4,6 +4,7 @@ export default function Home(){
     const SPOTIFY_CLIENT_ID = process.env.REACT_APP_SPOTIFY_CLIENT_ID
     const SPOTIFY_AUTHORIZE_ENDPOINT = "https://accounts.spotify.com/authorize"
     const REDIRECT_URL_AFTER_LOGIN ="http://localhost:3000/view"
+    const YOUTUBE_GET_USER_CHANNEL = "https://www.googleapis.com/youtube/v3/channels"
     // what we want from user
     const SCOPES = [
         "user-read-currently-playing",

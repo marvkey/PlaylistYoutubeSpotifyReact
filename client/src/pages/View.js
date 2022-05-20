@@ -57,8 +57,6 @@ export default function View(){
             console.log(error);
           });
       };
-      let data =getYoutubeServerSideProps();
-      console.log(data);
       const handleGetImages=() =>{
         handleGetPlaylists();
        
@@ -75,10 +73,9 @@ export default function View(){
             for(const element of response.data.reverse()){
             data =""
             data = element.url;
-            console.log(element.url)
           };
-          console.log("ID: ",item.id);
-          console.log(item.name+" "+data);
+         // console.log("ID: ",item.id);
+          //console.log(item.name+" "+data);
           spotifyPlaylist.push({name:item.name,data: data});
         })
         .catch((error) => {
@@ -89,11 +86,12 @@ export default function View(){
    
     return (
       <>
+
       <button onClick={handleGetImages}>Spotify playlist</button>
       {spotifyPlaylist.map(item =>(
         <div>
-          <p>{item.name}</p>
-          <img src={item.data} width={200} height={200}/>
+          <h6>{item.name}</h6>
+          <img src={item.data} width={50} height={50}/>
         </div>
         )
       )}
